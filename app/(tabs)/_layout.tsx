@@ -11,25 +11,28 @@ export default function TabLayout() {
 
   return (
     <Tabs
+      initialRouteName="connect"
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
         tabBarButton: HapticTab,
       }}>
       <Tabs.Screen
-        name="index"
+        name="connect"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: '연동',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="link" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="data"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: '데이터',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="chart.bar.fill" color={color} />,
         }}
       />
+      <Tabs.Screen name="index" options={{ href: null }} />
+      <Tabs.Screen name="explore" options={{ href: null }} />
     </Tabs>
   );
 }
