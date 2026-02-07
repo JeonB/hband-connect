@@ -4,8 +4,9 @@ import android.os.Handler
 import android.os.Looper
 import androidx.core.os.bundleOf
 import com.inuker.bluetooth.library.Code
-import com.inuker.bluetooth.library.search.SearchResponse
+import com.inuker.bluetooth.library.model.BleGattProfile
 import com.inuker.bluetooth.library.search.SearchResult
+import com.inuker.bluetooth.library.search.response.SearchResponse
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 import expo.modules.kotlin.Promise
@@ -22,9 +23,12 @@ import com.veepoo.protocol.listener.data.ISocialMsgDataListener
 import com.veepoo.protocol.model.datas.BatteryData
 import com.veepoo.protocol.model.datas.PersonInfoData
 import com.veepoo.protocol.model.datas.SportData
-import com.veepoo.protocol.model.enums.ESex
-import com.veepoo.protocol.model.enums.EPwdStatus
+import com.veepoo.protocol.model.datas.FunctionDeviceSupportData
+import com.veepoo.protocol.model.datas.FunctionSocailMsgData
 import com.veepoo.protocol.model.datas.PwdData
+import com.veepoo.protocol.model.enums.EOprateStauts
+import com.veepoo.protocol.model.enums.EPwdStatus
+import com.veepoo.protocol.model.enums.ESex
 
 class HbandBleModule : Module() {
   private val mainHandler = Handler(Looper.getMainLooper())
@@ -93,7 +97,7 @@ class HbandBleModule : Module() {
           VPOperateManager.getInstance().connectDevice(
             mac,
             object : IConnectResponse {
-              override fun connectState(code: Int, profile: Any?, isOadModel: Boolean) {
+              override fun connectState(code: Int, profile: BleGattProfile?, isOadModel: Boolean) {
                 sendEvent("onConnectionState", bundleOf(
                   "code" to code,
                   "success" to (code == Code.REQUEST_SUCCESS)
@@ -135,20 +139,21 @@ class HbandBleModule : Module() {
             object : IPwdDataListener {
               override fun onPwdDataChange(pwdData: PwdData?) {
                 if (pwdData == null) return
-                when (pwdData.mStatus) {
+                val status = pwdData.getmStatus()
+                when (status) {
                   EPwdStatus.CHECK_SUCCESS, EPwdStatus.CHECK_AND_TIME_SUCCESS, EPwdStatus.SETTING_SUCCESS, EPwdStatus.READ_SUCCESS ->
                     promise.resolve(null)
                   EPwdStatus.CHECK_FAIL -> promise.reject("CONFIRM_PWD_FAILED", "Password check failed", null)
-                  else -> promise.reject("CONFIRM_PWD_FAILED", "Status: ${pwdData.mStatus}", null)
+                  else -> promise.reject("CONFIRM_PWD_FAILED", "Status: $status", null)
                 }
               }
             },
             object : IDeviceFuctionDataListener {
-              override fun onFunctionSupportDataChange(functionSupport: Any?) { }
+              override fun onFunctionSupportDataChange(functionSupport: FunctionDeviceSupportData?) { }
             },
             object : ISocialMsgDataListener {
-              override fun onSocialMsgSupportDataChange(p0: Any?) { }
-              override fun onSocialMsgSupportDataChange2(p0: Any?) { }
+              override fun onSocialMsgSupportDataChange(p0: FunctionSocailMsgData?) { }
+              override fun onSocialMsgSupportDataChange2(p0: FunctionSocailMsgData?) { }
             },
             null,
             pwd,
@@ -163,7 +168,7 @@ class HbandBleModule : Module() {
     AsyncFunction("syncPersonInfo") { sex: Int, height: Int, weight: Int, age: Int, stepAim: Int, sleepAim: Int, promise: Promise ->
       runOnMain {
         try {
-          val eSex = if (sex == 1) ESex.WOMAN else ESex.MAN
+          val eSex = if (sex == 1) ESex.WOMEN else ESex.MAN
           val personInfo = PersonInfoData(eSex, height, weight, age, stepAim, sleepAim)
           VPOperateManager.getInstance().syncPersonInfo(
             { code: Int ->
@@ -172,7 +177,7 @@ class HbandBleModule : Module() {
               }
             },
             object : IPersonInfoDataListener {
-              override fun onPersoninfoDataChange(status: Any?) {
+              override fun OnPersoninfoDataChange(status: EOprateStauts?) {
                 promise.resolve(null)
               }
             },
