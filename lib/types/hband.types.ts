@@ -1,5 +1,5 @@
 /**
- * HBand BLE connection and data types (aligned with Veepoo SDK API).
+ * HBand 관련 타입 – 앱 전역에서 BLE/기기·데이터 타입은 이 파일만 사용 (aligned with Veepoo SDK API).
  */
 
 export type ConnectionStatus =

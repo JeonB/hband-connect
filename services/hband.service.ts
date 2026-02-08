@@ -1,5 +1,6 @@
 /**
- * HBand BLE service – wraps native module and exposes connection + data APIs.
+ * BLE/device access boundary – app must use only this and lib/types/hband.types.
+ * HBand BLE service: wraps native module and exposes connection + data APIs.
  * Device does not support concurrent BLE operations; call one at a time.
  */
 
