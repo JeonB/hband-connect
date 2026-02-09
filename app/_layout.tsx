@@ -4,6 +4,8 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
+import '../global.css';
+
 import { HbandConnectionProvider } from '@/contexts/hband-connection-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 

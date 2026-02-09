@@ -4,17 +4,17 @@
  * Use on Android only; on other platforms methods no-op and connection stays disconnected.
  */
 
-import { useEffect, useRef } from 'react';
-import { Platform } from 'react-native';
-import { hbandService } from '@/services/hband.service';
 import { useHbandConnection } from '@/contexts/hband-connection-context';
 import type { PersonInfoInput } from '@/lib/types/hband.types';
+import { hbandService } from '@/services/hband.service';
+import { useEffect, useRef } from 'react';
+import { Platform } from 'react-native';
 
 const isAndroid = Platform.OS === 'android';
 
 export function useHBand() {
   const { setStatus, setDevice, setError } = useHbandConnection();
-  const subscriptions = useRef<Array<{ remove: () => void }>>([]);
+  const subscriptions = useRef<{ remove: () => void }[]>([]);
 
   useEffect(() => {
     if (!isAndroid) return;
@@ -120,7 +120,8 @@ export function useHBand() {
     }
   };
 
-  const readSportStep = () => (isAndroid ? hbandService.readSportStep() : Promise.resolve({ step: 0, dis: 0, kcal: 0 }));
+  const readSportStep = () =>
+    isAndroid ? hbandService.readSportStep() : Promise.resolve({ step: 0, dis: 0, kcal: 0 });
   const readBattery = () =>
     isAndroid
       ? hbandService.readBattery()
