@@ -19,8 +19,8 @@ android {
 }
 
 repositories {
-  // AARs: path from this module (modules/hband-ble/android) to h-band/android/libs
-  flatDir { dirs "${projectDir}/../../../h-band/android/libs" }
+  // AARs: bundled in module so EAS Build / node_modules resolve without h-band path
+  flatDir { dirs "${projectDir}/libs" }
 }
 
 dependencies {
