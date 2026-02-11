@@ -1,6 +1,27 @@
+const path = require('path');
 const { getDefaultConfig } = require('expo/metro-config');
-const { withNativeWind } = require('nativewind/metro');
 
-const config = getDefaultConfig(__dirname);
+const projectRoot = __dirname;
+const config = getDefaultConfig(projectRoot);
 
-module.exports = withNativeWind(config, { input: './global.css' });
+function loadNativeWind() {
+  try {
+    return require('nativewind/metro');
+  } catch {
+    try {
+      return require(path.resolve(projectRoot, 'node_modules/nativewind/metro'));
+    } catch {
+      return null;
+    }
+  }
+}
+
+const nativewind = loadNativeWind();
+if (!nativewind) {
+  console.warn(
+    '[metro] nativewind/metro not found — using default config. Run pnpm install and ensure nativewind is in dependencies for Tailwind styles.'
+  );
+}
+module.exports = nativewind
+  ? nativewind.withNativeWind(config, { input: './global.css' })
+  : config;
