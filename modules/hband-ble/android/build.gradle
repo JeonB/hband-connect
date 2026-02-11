@@ -19,14 +19,14 @@ android {
 }
 
 repositories {
-  // AARs: bundled in module so EAS Build / node_modules resolve without h-band path
-  flatDir { dirs "${projectDir}/libs" }
+  // 로컬 AAR을 Maven 레이아웃으로 제공 (flatDir 경고 제거)
+  maven { url uri("${projectDir}/libs-maven") }
 }
 
 dependencies {
   implementation 'com.facebook.react:react-android'
-  implementation(name: 'vpbluetooth-1.17', ext: 'aar')
-  implementation(name: 'vpprotocol-2.3.21.15', ext: 'aar')
+  implementation 'local:vpbluetooth:1.17@aar'
+  implementation 'local:vpprotocol:2.3.21.15@aar'
   implementation 'com.google.code.gson:gson:2.10.1'
 }
 
