@@ -19,7 +19,8 @@ android {
 }
 
 repositories {
-  flatDir { dirs "${rootProject.projectDir.parent}/h-band/android/libs" }
+  // AARs: path from this module (modules/hband-ble/android) to h-band/android/libs
+  flatDir { dirs "${projectDir}/../../../h-band/android/libs" }
 }
 
 dependencies {
