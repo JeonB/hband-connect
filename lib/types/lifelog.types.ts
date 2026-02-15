@@ -16,9 +16,3 @@ export interface LifelogRecord {
   /** 저장 시각 (ISO string), 동기화 시간 기록용 */
   syncedAt?: string;
 }
-
-/** 날짜 범위 조회 파라미터 */
-export interface DateRange {
-  from: string;
-  to: string;
-}

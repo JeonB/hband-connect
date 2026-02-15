@@ -11,6 +11,12 @@ import {
   View,
 } from 'react-native';
 
+import {
+  CONNECTION_STATUS_LABELS,
+  CONNECTION_STEPS,
+  CONNECTION_TOTAL_STEPS,
+  getConnectionStepIndex,
+} from '@/constants/connection';
 import { useHbandConnection } from '@/contexts/hband-connection-context';
 import { useHBand } from '@/hooks/use-hband';
 import { hbandService } from '@/services/hband.service';
@@ -121,10 +127,44 @@ export default function ConnectScreen() {
     );
   }
 
+  const currentStep = getConnectionStepIndex(status);
+  const currentStepInfo = CONNECTION_STEPS[currentStep - 1];
+
   return (
     <View className="flex-1 p-4 gap-3">
       {error ? <Text className="text-red-500 mb-2">{error}</Text> : null}
-      <Text className="font-semibold mb-2">상태: {status}</Text>
+
+      <View className="mb-3 p-3 rounded-xl bg-gray-100 dark:bg-gray-800">
+        <Text className="text-xs text-gray-500 dark:text-gray-400 mb-1">현재 상태</Text>
+        <Text className="font-semibold text-base">{CONNECTION_STATUS_LABELS[status]}</Text>
+      </View>
+
+      <View className="mb-3 p-3 rounded-xl border border-gray-200 dark:border-gray-700">
+        <Text className="font-semibold mb-2">
+          연동 단계 ({currentStep}/{CONNECTION_TOTAL_STEPS})
+        </Text>
+        {CONNECTION_STEPS.map((s) => {
+          const isActive = s.step === currentStep;
+          return (
+            <View
+              key={s.step}
+              className={`flex-row gap-2 py-1.5 ${isActive ? 'rounded-lg bg-blue-100 dark:bg-blue-900/30 px-2 -mx-1' : ''}`}>
+              <Text
+                className={`w-6 text-sm ${isActive ? 'font-semibold text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                {s.step}.
+              </Text>
+              <View className="flex-1">
+                <Text className={`text-sm ${isActive ? 'font-semibold' : ''}`}>{s.title}</Text>
+                {isActive && currentStepInfo ? (
+                  <Text className="text-xs text-gray-600 dark:text-gray-300 mt-0.5">
+                    {currentStepInfo.description}
+                  </Text>
+                ) : null}
+              </View>
+            </View>
+          );
+        })}
+      </View>
 
       {status === 'disconnected' && (
         <>
@@ -162,6 +202,7 @@ export default function ConnectScreen() {
         <>
           <Text className="font-semibold mt-2">{device.name || device.mac}</Text>
           <TextInput
+            name="device-password"
             className="border p-2.5 rounded-md"
             value={pwd}
             onChangeText={setPwd}
